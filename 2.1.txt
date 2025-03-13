@@ -1,0 +1,31 @@
+format PE GUI 4.0
+include 'd:\FASM\INCLUDE\win32ax.inc'
+
+.data
+    Caption db 'Ðåçóëüòàò', 0
+    Text db 'Íîâîå çíà÷åíèå x2 = %d', 0
+    buf db 100 dup(?)
+    x1 dd 100         ; Ïåðâîå ÷èñëî
+    x2 dd 1           ; Âòîðîå ÷èñëî
+
+.code
+start:
+    ; Ïðîâåðêà óñëîâèÿ x2 * x2 < x1
+    mov eax, [x2]      ; Çàãðóæàåì x2
+    imul eax, eax      ; Êâàäðàò x2
+    cmp eax, [x1]      ; Ñðàâíèâàåì ñ x1
+    jge skip           ; Åñëè x2^2 >= x1, ïðîïóñêàåì èçìåíåíèå
+
+    ; Óâåëè÷èâàåì x2 â 6 ðàç
+    mov eax, [x2]
+    imul eax, 6
+    mov [x2], eax      ; Ñîõðàíÿåì íîâîå çíà÷åíèå
+
+    ; Âûâîä ðåçóëüòàòà òîëüêî åñëè x2 èçìåíèëñÿ
+    invoke wsprintf, addr buf, addr Text, eax
+    invoke MessageBox, 0, addr buf, addr Caption, MB_OK
+
+skip:
+    invoke ExitProcess, 0
+
+.end start            
